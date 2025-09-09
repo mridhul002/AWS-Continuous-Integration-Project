@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: python-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: python-app
@@ -17,3 +17,4 @@ spec:
         image: mridhuldoc/simple-python-flask-app:latest
         ports:
         - containerPort: 5000
+
