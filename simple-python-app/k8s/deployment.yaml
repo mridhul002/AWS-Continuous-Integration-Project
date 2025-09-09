@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: python-app
-        image: mridhuldoc/simple-python-flask-app:latest
+        image: docker.io/mridhuldoc/simple-python-flask-app:latest
         ports:
         - containerPort: 5000
+
 
