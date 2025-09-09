@@ -1,12 +1,18 @@
 version: 0.0
 os: linux
-
+files:
+  - source: /
+    destination: /home/ubuntu/AWS-Continuous-Integration-Project/simple-python-app
 hooks:
-  ApplicationStop:
-    - location: stop_container.sh
+  BeforeInstall:
+    - location: scripts/stop_server.sh
       timeout: 300
-      runas: root
+      runas: ubuntu
   AfterInstall:
-    - location: start_container.sh
+    - location: scripts/install_deps.sh
       timeout: 300
-      runas: root
+      runas: ubuntu
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: ubuntu
