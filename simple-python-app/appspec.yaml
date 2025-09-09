@@ -1,18 +1,10 @@
 version: 0.0
-os: linux
-files:
-  - source: /
-    destination: /home/ubuntu/AWS-Continuous-Integration-Project/simple-python-app
-hooks:
-  BeforeInstall:
-    - location: scripts/stop_server.sh
-      timeout: 300
-      runas: ubuntu
-  AfterInstall:
-    - location: scripts/install_deps.sh
-      timeout: 300
-      runas: ubuntu
-  ApplicationStart:
-    - location: scripts/start_server.sh
-      timeout: 300
-      runas: ubuntu
+resources:
+  - myK8sApp:
+      type: AWS::EKS::Application
+      properties:
+        clusterName: kube_cluster
+        namespace: default
+        taskDefinition: k8s/deployment.yaml
+
+
