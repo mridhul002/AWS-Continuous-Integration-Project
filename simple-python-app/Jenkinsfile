@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKERHUB_USERNAME = 'mridhuldoc'
-        DOCKERHUB_REPO = 'your-repo-name'
+        DOCKERHUB_REPO = 'AWS-Continuous-Integration-Project'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        GIT_CREDENTIALS_ID = 'your-git-credentials-id'
+        GIT_CREDENTIALS_ID = 'github-pat-mridul'
     }
 
     stages {
@@ -54,4 +54,5 @@ pipeline {
 
     }
 }
+
 
