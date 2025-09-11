@@ -8,7 +8,7 @@ pipeline {
         GIT_CREDENTIALS_ID = 'github-pat-mridul'
     }
 
-  //  stages {
+    stages {
    //     stage('Checkout') {
      //       steps {
               //  git branch: 'dev', credentialsId: 'github-pat-mridul', url: 'https://github.com/mridul002/AWS-Continuous-Integration-Project.git'
@@ -54,6 +54,7 @@ pipeline {
 
     }
 }
+
 
 
 
