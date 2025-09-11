@@ -11,9 +11,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'github-pat-mridul', git branch: 'dev', url: 'https://github.com/mridul002/AWS-Continuous-Integration-Project.git'
+                git branch: 'dev', credentialsId: 'github-pat-mridul', url: 'https://github.com/mridul002/AWS-Continuous-Integration-Project.git'
             }
-        }
+    }
 
         stage('Install Dependencies') {
             steps {
@@ -44,7 +44,7 @@ pipeline {
                 sh """
                 sed -i 's|image: .*|image: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG|' simple-python-app/deployment.yaml
                 git config user.name "mridul002"
-                git config user.email "mridhulofficial002.com"
+                git config user.email "mridhulofficial002@gamil.com"
                 git add simple-python-app/deployment.yaml
                 git commit -m "Update image tag to $IMAGE_TAG"
                 git push origin dev
@@ -54,6 +54,7 @@ pipeline {
 
     }
 }
+
 
 
 
