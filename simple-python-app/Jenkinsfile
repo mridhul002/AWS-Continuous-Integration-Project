@@ -32,8 +32,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
                     docker login -u $DOCKER_USER -p $DOCKER_PASS
-                    docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG simple-python-app/
-                    docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG
+                    docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest .
+                    docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
                     """
                 }
             }
@@ -54,3 +54,4 @@ pipeline {
 
     }
 }
+
