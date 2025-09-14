@@ -17,22 +17,22 @@ pipeline {
             //}
        // }
 
-        stage('Install Dependencies') {
+        stage('Install Dependencies and run test') {
             steps {
                 sh '''
-                   python3 -m venv venv
-                   . venv/bin/activate
-                   pip install --upgrade pip
-                   pip install -r simple-python-app/requirements.txt
-               '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r simple-python-app/requirements.txt
+                    python -m unittest discover simple-python-app
+                '''
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                sh 'python3 -m unittest discover simple-python-app'
-            }
-        }
+      //  stage('Run Tests') {
+          //  steps {
+        //        sh 'python3 -m unittest discover simple-python-app'
+      //      }
+      //  }
 
         stage('Build & Push Docker Image') {
             steps {
@@ -64,5 +64,6 @@ pipeline {
         }
     }
 }
+
 
 
