@@ -9,13 +9,13 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'dev',
-                    credentialsId: "${GIT_CREDENTIALS_ID}",
-                    url: 'https://github.com/mridul002/AWS-Continuous-Integration-Project.git'
-            }
-        }
+       // stage('Checkout') {
+         //   steps {
+           //     git branch: 'dev',
+             //       credentialsId: "${GIT_CREDENTIALS_ID}",
+               //     url: 'https://github.com/mridul002/AWS-Continuous-Integration-Project.git'
+            //}
+       // }
 
         stage('Install Dependencies') {
             steps {
@@ -59,3 +59,4 @@ pipeline {
         }
     }
 }
+
