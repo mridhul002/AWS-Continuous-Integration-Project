@@ -39,7 +39,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
                     docker login -u $DOCKER_USER -p $DOCKER_PASS
-                    docker build -t ${DOCKER_USER}/aws-continuous-integration-project:latest -f simple-python-app/Dockerfile simple-python-app/
+                    docker build -t ${DOCKER_USER}/python-cal-project:latest -f simple-python-app/Dockerfile simple-python-app/
                     docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
                     docker tag $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
                     docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
@@ -64,6 +64,7 @@ pipeline {
         }
     }
 }
+
 
 
 
