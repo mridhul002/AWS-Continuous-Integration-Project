@@ -19,7 +19,12 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip3 install -r simple-python-app/requirements.txt'
+                sh '''
+                   python3 -m venv venv
+                   . venv/bin/activate
+                   pip install --upgrade pip
+                   pip install -r simple-python-app/requirements.txt
+               '''
             }
         }
 
@@ -59,4 +64,5 @@ pipeline {
         }
     }
 }
+
 
