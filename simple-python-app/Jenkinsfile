@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_USERNAME = 'mridhuldoc'
         DOCKERHUB_REPO = 'aws-continuous-integration-project'
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        IMAGE_TAG = 'latest'
         GIT_CREDENTIALS_ID = 'github-pat-mridul'
     }
 
@@ -41,7 +41,7 @@ pipeline {
                     docker login -u $DOCKER_USER -p $DOCKER_PASS
                     docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest .
                     docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
-                    docker tag $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
+                    docker tag $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
                     docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
                     """
                 }
@@ -64,6 +64,7 @@ pipeline {
         }
     }
 }
+
 
 
 
