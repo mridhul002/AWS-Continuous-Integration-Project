@@ -3,21 +3,24 @@ pipeline {
 
     environment {
         DOCKERHUB_USERNAME = 'mridhuldoc'
-        DOCKERHUB_REPO = 'aws-continuous-integration-project'
-        IMAGE_TAG = 'latest'
-        GIT_CREDENTIALS_ID = 'github-pat-mridul'
+        DOCKERHUB_REPO     = 'aws-continuous-integration-project'
+        IMAGE_TAG          = "build-${BUILD_NUMBER}"   // unique tag per build
+        APP_REPO           = 'https://github.com/mridul002/aws-Continuous-integration-project.git'
+        HELM_REPO          = 'https://github.com/mridul002/python-helm-chart.git'
+        APP_GIT_CRED       = 'github-pat-mridul'       // Jenkins credential ID for GitHub PAT
+        HELM_GIT_CRED      = 'github-pat-mridul'       // same PAT works for Helm repo
     }
 
     stages {
-       // stage('Checkout') {
+       // stage('Checkout App Repo') {
          //   steps {
            //     git branch: 'dev',
-             //       credentialsId: "${GIT_CREDENTIALS_ID}",
-               //     url: 'https://github.com/mridul002/AWS-Continuous-Integration-Project.git'
-            //}
+             //       credentialsId: "${APP_GIT_CRED}",
+               //     url: "${APP_REPO}"
+          //  }
        // }
 
-        stage('Install Dependencies and run test') {
+        stage('Install Dependencies & Run Tests') {
             steps {
                 sh '''
                     python3 -m venv venv
@@ -28,46 +31,38 @@ pipeline {
             }
         }
 
-      //  stage('Run Tests') {
-          //  steps {
-        //        sh 'python3 -m unittest discover simple-python-app'
-      //      }
-      //  }
-
         stage('Build & Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
-                    docker login -u $DOCKER_USER -p $DOCKER_PASS
-                    docker build -t ${DOCKER_USER}/python-cal-project:latest -f simple-python-app/Dockerfile simple-python-app/
-                    docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
-                    docker tag $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
-                    docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG -f python-cal-project/Dockerfile python-cal-project/
+                        docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG
                     """
                 }
             }
         }
 
-        stage('Update Deployment YAML') {
+        stage('Update Helm Chart Repo') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                withCredentials([usernamePassword(credentialsId: "${HELM_GIT_CRED}", usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                     sh """
-                    sed -i 's|image: .*|image: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG|' simple-python-app/deployment.yaml
-                    git config user.name "mridul002"
-                    git config user.email "mridhulofficial002@gmail.com"
-                    git add simple-python-app/deployment.yaml
-                    git commit -m "Update image tag to $IMAGE_TAG" || echo "No changes to commit"
-                    git push https://$GIT_USER:$GIT_PASS@github.com/mridul002/AWS-Continuous-Integration-Project.git dev
+                        # clone helm chart repo
+                        git clone https://$GIT_USER:$GIT_PASS@github.com/mridul002/python-helm-chart.git
+                        cd python-helm-chart
+
+                        # update values.yaml with new image + tag
+                        sed -i "s|repository:.*|repository: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO|" values.yaml
+                        sed -i "s|tag:.*|tag: $IMAGE_TAG|" values.yaml
+
+                        git config user.name "mridul002"
+                        git config user.email "mridhulofficial002@gmail.com"
+                        git add values.yaml
+                        git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
+                        git push origin main
                     """
                 }
             }
         }
     }
 }
-
-
-
-
-
-
-
