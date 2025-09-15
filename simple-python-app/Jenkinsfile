@@ -1,10 +1,10 @@
 pipeline {
-    agent any //{
-        //docker {
-          // image 'python:3.12-slim'
-          // args '-u root:root'
-        //}
-    //}
+    agent {
+        docker {
+           image 'python:3.12-slim'
+           args '-u root:root'
+        }
+    }
 
     environment {
         DOCKERHUB_USERNAME = 'mridhuldoc'
@@ -74,6 +74,7 @@ pipeline {
         }
     }
 }
+
 
 
 
