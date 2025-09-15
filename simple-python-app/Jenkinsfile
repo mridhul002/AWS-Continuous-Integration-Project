@@ -1,14 +1,15 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.12-slim'
-            args '-u root:root'
-        }
-    }
+    agent any  //{
+        //docker {
+        //    image 'python:3.12-slim'
+        //    args '-u root:root'
+       // }
+  //  }
 
     environment {
         DOCKERHUB_USERNAME = 'mridhuldoc'
         DOCKERHUB_REPO     = 'aws-continuous-integration-project'
+        
         IMAGE_TAG          = "build-${BUILD_NUMBER}"   // unique tag per build
         APP_REPO           = 'https://github.com/mridul002/aws-Continuous-integration-project.git'
         HELM_REPO          = 'https://github.com/mridul002/python-helm-chart.git'
@@ -41,9 +42,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG -f python-cal-project/Dockerfile python-cal-project/
-                        docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG
+                    docker login -u $DOCKER_USER -p $DOCKER_PASS
+                    docker build -t ${DOCKER_USER}/python-cal-project:latest -f simple-python-app/Dockerfile simple-python-app/
+                    docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
+                    docker tag $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
+                    docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
                     """
                 }
             }
@@ -72,6 +75,7 @@ pipeline {
         }
     }
 }
+
 
 
 
