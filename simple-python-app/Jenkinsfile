@@ -51,10 +51,10 @@ pipeline {
 
         stage('Update Helm Chart Repo') {
             steps {
-                withCredentials([string(credentialsId: 'github-pat-mridul', variable: 'GIT_TOKEN')]) {
+                withCredentials([usernamePassword(credentialsId: 'github-pat-mridul', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                     sh '''
                         # clone helm chart repo
-                        git clone https://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@github.com/mridul002/python-helm-chart.git
+                        git clone https://$GIT_USER:$GIT_PASS@github.com/mridul002/python-helm-chart.git
                         cd python-helm-chart
 
                         # update values.yaml with new image + tag
@@ -72,6 +72,7 @@ pipeline {
         }
     }
 }
+
 
 
 
