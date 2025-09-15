@@ -64,7 +64,7 @@ pipeline {
                         git config user.name "mridul002"
                         git config user.email "mridhulofficial002@gmail.com"
                         git add values.yaml
-                        git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
+                        git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest" || echo "No changes to commit"
                         git push origin main
                     """
                 }
@@ -72,6 +72,7 @@ pipeline {
         }
     }
 }
+
 
 
 
