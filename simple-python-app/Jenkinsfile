@@ -36,14 +36,17 @@ pipeline {
         }
 
         stage('Build & Push Docker Image') {
-            withCredentials([usernamePassword(credentialsId: 'dockerhub-creds-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                sh '''
-                    docker login -u $DOCKER_USER -p $DOCKER_PASS
-                    docker build -t mridhuldoc/python-cal-project:latest .
-                    docker push mridhuldoc/python-cal-project:latest
-                '''
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        docker login -u $DOCKER_USER -p $DOCKER_PASS
+                        docker build -t mridhuldoc/python-cal-project:latest .
+                        docker push mridhuldoc/python-cal-project:latest
+                    '''
+                }
             }
         }
+
 
         stage('Update Helm Chart Repo') {
             steps {
@@ -68,6 +71,7 @@ pipeline {
         }
     }
 }
+
 
 
 
