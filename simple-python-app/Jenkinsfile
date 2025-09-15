@@ -23,6 +23,7 @@ pipeline {
         stage('Install Dependencies & Run Tests') {
             steps {
                 sh '''
+                    sudo apt update && sudo apt install -y python3-venv
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install -r simple-python-app/requirements.txt
@@ -66,3 +67,4 @@ pipeline {
         }
     }
 }
+
