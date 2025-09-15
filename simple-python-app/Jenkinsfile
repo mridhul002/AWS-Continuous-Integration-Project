@@ -54,7 +54,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'github-pat-mridul', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                     sh """
                         # clone helm chart repo
-                        git clone https://$GIT_USER:$GIT_PASS@github.com/mridul002/python-helm-chart.git
+                        git clone https://mridhul002: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@github.com/mridul002/python-helm-chart.git
                         cd python-helm-chart
 
                         # update values.yaml with new image + tag
@@ -72,6 +72,7 @@ pipeline {
         }
     }
 }
+
 
 
 
