@@ -13,8 +13,8 @@ pipeline {
         IMAGE_TAG          = "build-${BUILD_NUMBER}"   // unique tag per build
         APP_REPO           = 'https://github.com/mridul002/aws-continuous-integration-project.git'
         HELM_REPO          = 'https://github.com/mridhul002/python-helm-chart.git'
-        APP_GIT_CRED       = 'github-pat-mridul'       // Jenkins credential ID for GitHub PAT
-        HELM_GIT_CRED      = 'github-pat-mridul'       // same PAT works for Helm repo
+        APP_GIT_CRED       = 'github-pat'       // Jenkins credential ID for GitHub PAT
+        HELM_GIT_CRED      = 'github-pat'       // same PAT works for Helm repo
     }
 
     stages {
@@ -51,10 +51,10 @@ pipeline {
 
         stage('Update Helm Chart Repo') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'github-pat-mridul', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                withCredentials([string(credentialsId: 'github-pat', variable: 'GIT_TOKEN')]) {
                     sh '''
-                        # clone helm chart repo
-                        git clone https://$GIT_USER:$GIT_PASS@github.com/mridul002/python-helm-chart.git
+                        rm -rf python-helm-chart
+                        git clone https://$GIT_TOKEN@github.com/mridul002/python-helm-chart.git
                         cd python-helm-chart
 
                         # update values.yaml with new image + tag
@@ -72,6 +72,7 @@ pipeline {
         }
     }
 }
+
 
 
 
