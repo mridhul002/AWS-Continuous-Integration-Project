@@ -51,7 +51,7 @@ pipeline {
 
         stage('Update Helm Chart Repo') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'github-pat-mridul', variable: 'GIT_TOKEN')]) {
+                withCredentials([string(credentialsId: 'github-pat-mridul', variable: 'GIT_TOKEN')]) {
                     sh """
                         # clone helm chart repo
                         git clone https://$GIT_TOKEN@github.com/mridul002/python-helm-chart.git
@@ -72,6 +72,7 @@ pipeline {
         }
     }
 }
+
 
 
 
