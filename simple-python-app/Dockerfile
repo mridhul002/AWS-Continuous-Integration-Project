@@ -1,23 +1,32 @@
-# Base image
-FROM python:3.8
+#  Base image: lightweight and modern
+FROM python:3.12-slim
 
-# Set the working directory inside the container
+#  Set working directory
 WORKDIR /app
 
-# Copy the requirements file
-COPY requirements.txt .
+#  Install system dependencies (for pip, venv, etc.)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install the project dependencies
-RUN pip install -r requirements.txt
+#  Copy requirements first for better caching
+COPY simple-python-app/requirements.txt .
 
-# Copy the application code into the container
-COPY . .
+#  Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the port the Flask application will be listening on
+#  Copy application code
+COPY simple-python-app/ .
+
+#  Expose Flask port
 EXPOSE 5000
 
-# Set environment variables, if necessary
-# ENV MY_ENV_VAR=value
+#  Optional environment variables
+# ENV FLASK_ENV=production
 
-# Run the Flask application
+#  Run the Flask app
 CMD ["python", "app.py"]
