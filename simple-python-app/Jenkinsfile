@@ -29,6 +29,8 @@ pipeline {
         stage('Install Dependencies & Run Tests') {
             steps {
                 sh '''
+                    python3 -m venv .venv
+                    .venv/bin/activate
                     pip install -r simple-python-app/requirements.txt
                     python -m unittest discover simple-python-app
                 '''
@@ -37,6 +39,7 @@ pipeline {
 
         stage('Build & Push Docker Image') {
             steps {
+                sh 'rm -rf .venv'
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
@@ -71,6 +74,7 @@ pipeline {
         }
     }
 }
+
 
 
 
