@@ -54,8 +54,12 @@ pipeline {
                 withCredentials([string(credentialsId: 'github_pat', variable: 'GIT_TOKEN')]) {
                     sh """
                         rm -rf python-helm-chart
-                        git clone https://\$GIT_TOKEN@github.com/mridhul002/python-helm-chart.git
+                        git clone https://github.com/mridhul002/python-helm-chart.git
                         cd python-helm-chart
+        
+                        # Set Git credential helper temporarily
+                        git config credential.helper store
+                        echo "https://mridhul002:\$GIT_TOKEN@github.com" > ~/.git-credentials
         
                         # update values.yaml with new image + tag
                         sed -i "s|repository:.*|repository: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO|" values.yaml
@@ -66,14 +70,15 @@ pipeline {
                         git add values.yaml
                         git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
         
-                        # push back to GitHub main branch
-                        git push https://\$GIT_TOKEN@github.com/mridhul002/python-helm-chart.git main
+                        # push back
+                        git push origin main
                     """
                 }
             }
         }
     }
 }
+
 
 
 
