@@ -51,33 +51,37 @@ pipeline {
 
         stage('Update Helm Chart Repo') {
             steps {
-                withCredentials([string(credentialsId: 'github_pat', variable: 'GIT_TOKEN')]) {
-                    sh """
-                        rm -rf python-helm-chart
-                        git clone https://github.com/mridhul002/python-helm-chart.git
-                        cd python-helm-chart
+                sh """
+                    # Clean up previous clone
+                    rm -rf python-helm-chart
         
-                        # Set Git credential helper temporarily
-                        git config credential.helper store
-                        echo "https://mridhul002:\$GIT_TOKEN@github.com" > ~/.git-credentials
+                    # Clone repo using SSH
+                    git clone git@github.com:mridhul002/python-helm-chart.git
+                    cd python-helm-chart
         
-                        # update values.yaml with new image + tag
-                        sed -i "s|repository:.*|repository: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO|" values.yaml
-                        sed -i "s|tag:.*|tag: $IMAGE_TAG|" values.yaml
+                    # Automatically create image tag
+                    IMAGE_TAG="build-${BUILD_NUMBER}"
         
-                        git config user.name "mridhul002"
-                        git config user.email "mridhulofficial002@gmail.com"
-                        git add values.yaml
-                        git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
+                    # Update values.yaml with new Docker image and tag
+                    sed -i "s|repository:.*|repository: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO|" values.yaml
+                    sed -i "s|tag:.*|tag: $IMAGE_TAG|" values.yaml
         
-                        # push back
-                        git push origin main
-                    """
-                }
+                    # Configure Git user
+                    git config user.name "mridhul002"
+                    git config user.email "mridhulofficial002@gmail.com"
+        
+                    # Commit changes if any
+                    git add values.yaml
+                    git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
+        
+                    # Push back to GitHub
+                    git push origin main
+                """
             }
         }
     }
 }
+
 
 
 
