@@ -50,42 +50,32 @@ pipeline {
 
         stage('Update Helm Chart Repo') {
             steps {
-                sh """
-                    mkdir -p ~/.ssh
-                    chmod 700 ~/.ssh
+                sshagent(['jenkins-ssh-key-id']) { // use the ID of the SSH key stored in Jenkins
+                    sh """
+                        rm -rf python-helm-chart
+                        git clone git@github.com:mridhul002/python-helm-chart.git
+                        cd python-helm-chart
         
-                    # Ensure GitHub host is trusted
-                    ssh-keyscan github.com >> ~/.ssh/known_hosts
+                        IMAGE_TAG="build-${BUILD_NUMBER}"
         
-                    # Remove old clone
-                    rm -rf python-helm-chart
+                        sed -i "s|repository:.*|repository: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO|" values.yaml
+                        sed -i "s|tag:.*|tag: $IMAGE_TAG|" values.yaml
         
-                    # Clone repo using SSH
-                    git clone git@github.com:mridhul002/python-helm-chart.git
-                    cd python-helm-chart
+                        git config user.name "mridhul002"
+                        git config user.email "mridhulofficial002@gmail.com"
         
-                    # Auto-incremented image tag
-                    IMAGE_TAG="build-${BUILD_NUMBER}"
+                        git add values.yaml
+                        git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
         
-                    # Update values.yaml
-                    sed -i "s|repository:.*|repository: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO|" values.yaml
-                    sed -i "s|tag:.*|tag: $IMAGE_TAG|" values.yaml
-        
-                    # Git config
-                    git config user.name "mridhul002"
-                    git config user.email "mridhulofficial002@gmail.com"
-        
-                    # Commit changes if any
-                    git add values.yaml
-                    git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
-        
-                    # Push back
-                    git push origin main
-                """
+                        git push origin main
+                    """
+                }
             }
         }
+
     }
 }
+
 
 
 
