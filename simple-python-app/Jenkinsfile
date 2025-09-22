@@ -52,9 +52,9 @@ pipeline {
         stage('Update Helm Chart Repo') {
             steps {
                 withCredentials([string(credentialsId: 'github_pat', variable: 'GIT_TOKEN')]) {
-                    sh '''
+                    sh """
                         rm -rf python-helm-chart
-                        git clone https://$GIT_TOKEN@github.com/mridhul002/python-helm-chart.git
+                        git clone https://\$GIT_TOKEN@github.com/mridhul002/python-helm-chart.git
                         cd python-helm-chart
         
                         # update values.yaml with new image + tag
@@ -67,13 +67,14 @@ pipeline {
                         git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
         
                         # push back to GitHub main branch
-                        git push https://$GIT_TOKEN@github.com/mridhul002/python-helm-chart.git main
-                    '''
+                        git push https://\$GIT_TOKEN@github.com/mridhul002/python-helm-chart.git main
+                    """
                 }
             }
         }
     }
 }
+
 
 
 
