@@ -48,25 +48,30 @@ pipeline {
             }
         }
 
-
         stage('Update Helm Chart Repo') {
             steps {
                 sh """
-                    # Clean up previous clone
+                    mkdir -p ~/.ssh
+                    chmod 700 ~/.ssh
+        
+                    # Ensure GitHub host is trusted
+                    ssh-keyscan github.com >> ~/.ssh/known_hosts
+        
+                    # Remove old clone
                     rm -rf python-helm-chart
         
                     # Clone repo using SSH
                     git clone git@github.com:mridhul002/python-helm-chart.git
                     cd python-helm-chart
         
-                    # Automatically create image tag
+                    # Auto-incremented image tag
                     IMAGE_TAG="build-${BUILD_NUMBER}"
         
-                    # Update values.yaml with new Docker image and tag
+                    # Update values.yaml
                     sed -i "s|repository:.*|repository: $DOCKERHUB_USERNAME/$DOCKERHUB_REPO|" values.yaml
                     sed -i "s|tag:.*|tag: $IMAGE_TAG|" values.yaml
         
-                    # Configure Git user
+                    # Git config
                     git config user.name "mridhul002"
                     git config user.email "mridhulofficial002@gmail.com"
         
@@ -74,13 +79,14 @@ pipeline {
                     git add values.yaml
                     git commit -m "Update image to $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:$IMAGE_TAG" || echo "No changes to commit"
         
-                    # Push back to GitHub
+                    # Push back
                     git push origin main
                 """
             }
         }
     }
 }
+
 
 
 
