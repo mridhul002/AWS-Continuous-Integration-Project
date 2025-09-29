@@ -17,5 +17,10 @@ spec:
         image: mridhuldoc/simple-python-flask-app:latest
         ports:
         - containerPort: 5000
-
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
 

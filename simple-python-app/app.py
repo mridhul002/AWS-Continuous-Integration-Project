@@ -1,36 +1,42 @@
 from flask import Flask, request, render_template_string
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+import time
 
 app = Flask(__name__)
 
+# -----------------------
+# Prometheus Metrics
+# -----------------------
+REQUEST_COUNT = Counter("http_requests_total", "Total HTTP Requests", ["method", "endpoint"])
+REQUEST_LATENCY = Histogram("http_request_duration_seconds", "Request latency in seconds")
+
+@app.before_request
+def before_request():
+    request.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    latency = time.time() - request.start_time
+    REQUEST_COUNT.labels(method=request.method, endpoint=request.path).inc()
+    REQUEST_LATENCY.observe(latency)
+    return response
+
+@app.route("/metrics")
+def metrics():
+    return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
+
+# -----------------------
+# Your Calculator Code
+# -----------------------
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        form {
-            margin-top: 20px;
-        }
-        input, select, button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        h3 {
-            margin-top: 20px;
-        }
-    </style>
-</head>
+<head><title>Calculator</title></head>
 <body>
     <h2>Simple Calculator</h2>
     <form method="post">
-        <input type="number" step="any" name="a" placeholder="Enter first number" required>
-        <input type="number" step="any" name="b" placeholder="Enter second number" required>
+        <input type="number" step="any" name="a" required>
+        <input type="number" step="any" name="b" required>
         <select name="operation">
             <option value="add">Add</option>
             <option value="subtract">Subtract</option>
@@ -74,11 +80,5 @@ def calculator():
             error = "Invalid input: " + str(e)
     return render_template_string(HTML_TEMPLATE, result=result, error=error)
 
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
-
-
-
-

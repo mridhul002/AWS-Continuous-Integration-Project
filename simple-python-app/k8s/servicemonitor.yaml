@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: calculator-servicemonitor
+  labels:
+    release: kube-prometheus-stack   # must match your Prometheus release
+spec:
+  selector:
+    matchLabels:
+      app: calculator
+  endpoints:
+  - port: 5000
+    path: /metrics
+    interval: 15s
