@@ -5,8 +5,9 @@ def test_add():
     assert calculate(2, 3, "add") == 5
 
 def test_divide_by_zero():
-    with pytest.raises(ZeroDivisionError):
+    with pytest.raises(ValueError, match="Division by zero"):
         calculate(1, 0, "divide")
+
 
 def test_invalid_op():
     with pytest.raises(ValueError):
