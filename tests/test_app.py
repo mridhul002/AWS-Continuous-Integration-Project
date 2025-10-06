@@ -1,4 +1,4 @@
-from app import create_app
+from simple-python-app.app import create_app
 
 @pytest.fixture
 def client():
@@ -22,3 +22,4 @@ def test_metrics_includes_counter(client):
     r = client.get("/metrics")
     assert r.status_code == 200
     assert b"http_requests_total" in r.data
+
