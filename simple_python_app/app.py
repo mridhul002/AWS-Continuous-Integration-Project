@@ -1,4 +1,6 @@
 from flask import Flask, request, render_template_string
+from prometheus_flask_exporter import PrometheusMetrics
+
 
 app = Flask(__name__)
 
