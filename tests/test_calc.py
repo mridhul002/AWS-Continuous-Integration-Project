@@ -1,5 +1,5 @@
 import pytest
-from simple-python-app.app import calculate
+from simple_python_app.app import calculate
 
 def test_add():
     assert calculate(2, 3, "add") == 5

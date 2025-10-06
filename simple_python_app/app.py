@@ -48,34 +48,40 @@ HTML_TEMPLATE = """
 </html>
 """
 
-@app.route("/", methods=["GET", "POST"])
-def calculator():
-    result = None
-    error = None
-    if request.method == "POST":
-        try:
-            a = float(request.form["a"])
-            b = float(request.form["b"])
-            op = request.form["operation"]
-            if op == "add":
-                result = a + b
-            elif op == "subtract":
-                result = a - b
-            elif op == "multiply":
-                result = a * b
-            elif op == "divide":
-                if b == 0:
-                    error = "Division by zero not allowed"
+def create_app():
+    app = Flask(__name__)
+
+    @app.route("/", methods=["GET", "POST"])
+    def calculator():
+        result = None
+        error = None
+        if request.method == "POST":
+            try:
+                a = float(request.form["a"])
+                b = float(request.form["b"])
+                op = request.form["operation"]
+                if op == "add":
+                    result = a + b
+                elif op == "subtract":
+                    result = a - b
+                elif op == "multiply":
+                    result = a * b
+                elif op == "divide":
+                    if b == 0:
+                        error = "Division by zero not allowed"
+                    else:
+                        result = a / b
                 else:
-                    result = a / b
-            else:
-                error = "Invalid operation"
-        except Exception as e:
-            error = "Invalid input: " + str(e)
-    return render_template_string(HTML_TEMPLATE, result=result, error=error)
+                    error = "Invalid operation"
+            except Exception as e:
+                error = "Invalid input: " + str(e)
+        return render_template_string(HTML_TEMPLATE, result=result, error=error)
 
+    return app
 
+# Optional: for local dev
 if __name__ == "__main__":
+    app = create_app()
     app.run(host="0.0.0.0", port=5000)
 
 

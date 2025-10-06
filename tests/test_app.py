@@ -1,4 +1,4 @@
-from simple-python-app.app import create_app
+from simple_python_app.app import create_app
 
 @pytest.fixture
 def client():
