@@ -1,0 +1,4 @@
+Flask==2.3.2
+#Werkzeug<3.0
+prometheus_client
+pytest
