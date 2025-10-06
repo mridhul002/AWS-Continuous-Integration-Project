@@ -18,9 +18,7 @@ def test_add_post(client):
     assert b"Result: 5.0" in r.data or b"Result: 5" in r.data
 
 def test_metrics_includes_counter(client):
-    # hit an endpoint to generate metrics
     client.get("/")
     r = client.get("/metrics")
     assert r.status_code == 200
-    assert b"http_requests_total" in r.data
-
+    assert b"flask_http_request_total" in r.data
