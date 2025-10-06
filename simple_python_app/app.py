@@ -64,6 +64,7 @@ def calculate(a: float, b: float, operation: str) -> float:
 
 def create_app():
     app = Flask(__name__)
+    metrics = PrometheusMetrics(app)
 
     @app.route("/", methods=["GET", "POST"])
     def calculator():
