@@ -48,6 +48,20 @@ HTML_TEMPLATE = """
 </html>
 """
 
+def calculate(a: float, b: float, operation: str) -> float:
+    if operation == "add":
+        return a + b
+    elif operation == "subtract":
+        return a - b
+    elif operation == "multiply":
+        return a * b
+    elif operation == "divide":
+        if b == 0:
+            raise ValueError("Division by zero not allowed")
+        return a / b
+    else:
+        raise ValueError("Invalid operation")
+
 def create_app():
     app = Flask(__name__)
 
@@ -60,21 +74,9 @@ def create_app():
                 a = float(request.form["a"])
                 b = float(request.form["b"])
                 op = request.form["operation"]
-                if op == "add":
-                    result = a + b
-                elif op == "subtract":
-                    result = a - b
-                elif op == "multiply":
-                    result = a * b
-                elif op == "divide":
-                    if b == 0:
-                        error = "Division by zero not allowed"
-                    else:
-                        result = a / b
-                else:
-                    error = "Invalid operation"
+                result = calculate(a, b, op)
             except Exception as e:
-                error = "Invalid input: " + str(e)
+                error = str(e)
         return render_template_string(HTML_TEMPLATE, result=result, error=error)
 
     return app
@@ -83,8 +85,3 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     app.run(host="0.0.0.0", port=5000)
-
-
-
-
-
