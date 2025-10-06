@@ -1,3 +1,4 @@
+import pytest
 from simple_python_app.app import create_app
 
 @pytest.fixture
