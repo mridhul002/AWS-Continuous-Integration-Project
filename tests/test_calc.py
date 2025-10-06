@@ -1,5 +1,5 @@
 import pytest
-from app.calc import calculate
+from simple-python-app.app import calculate
 
 def test_add():
     assert calculate(2, 3, "add") == 5
@@ -11,3 +11,4 @@ def test_divide_by_zero():
 def test_invalid_op():
     with pytest.raises(ValueError):
         calculate(1, 2, "power")
+
